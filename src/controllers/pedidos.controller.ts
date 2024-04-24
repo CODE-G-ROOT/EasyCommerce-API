@@ -7,14 +7,14 @@ import {
   sendGetResponse,
   sendErrorPost,
   sendErrorDeleted,
+  sendOneResponse,
 } from "../utils/send";
 import {
   executeQuery,
-  findFilter,
+  findone,
   postQuery,
   updateQuery,
 } from "../utils/db.utils";
-import { EstadoPedido } from "../interfaces/types";
 import { handle500Status } from "../utils/Erros";
 import { ObjectId } from "mongodb";
 
@@ -28,18 +28,30 @@ const db = MongodbConnection.getIntance().getConnection(DB!);
 // GET
 export const findAll = async (req: Request, res: Response) => {
   try {
-    const { limit, skip, fn } = req.query;
+    const { limit, skip, status, id } = req.query;
+    let results = null;
 
-    const filter = findFilter(<EstadoPedido>fn);
     const col = await db.collection(collection.pedidos);
-    const results = await executeQuery(
+    if (id) {
+      results = await col.findOne(findone(<string>id));
+      if (!results) {
+        return  sendOneResponse(results, res, "Document not found")
+      }
+      console.log(results);
+      return sendOneResponse(results, res);
+    }
+
+    results = await executeQuery(
       col,
-      filter,
+      status,
       <string>limit,
       <string>skip
     );
 
-    sendGetResponse(results, res, "No documents to show"); // send response and error 404 handle
+    console.log(results);
+    
+
+    sendGetResponse(<any>results, res, "No documents to show"); // send response and error 404 handle
   } catch (error: any) {
     handle500Status(error, res); // handle error
   }
@@ -78,12 +90,7 @@ export const updateStatus = async (req: Request, res: Response) => {
     const result = await col.updateOne(filter, update);
     console.log(result);
 
-    sendUpdateResponse(
-      result,
-      res,
-      "Document updated",
-      "Document don't found"
-    );
+    sendUpdateResponse(result, res, "Document updated", "Document don't found");
   } catch (error: any) {
     handle500Status(error, res);
   }

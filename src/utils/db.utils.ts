@@ -2,7 +2,7 @@ import { Collection, ObjectId } from "mongodb";
 import { data_col_3 } from "../config/config";
 import { Pedido, EstadoPedido } from "../interfaces/types";
 
-export const findFilter = (fn: EstadoPedido) => {
+const findFilter = (fn: EstadoPedido) => {
   if (fn) {
     return {
       [data_col_3.status]: fn,
@@ -12,21 +12,25 @@ export const findFilter = (fn: EstadoPedido) => {
   }
 };
 
+export const findone = (id:string) => {
+  if(id) {
+    return  { _id: new ObjectId(id)}
+  } else {
+    return {}
+  }
+}
+
 export const executeQuery = async (
   col: Collection,
-  filter: any,
-  limit: string | undefined,
-  skip: string | undefined
+  // id?: any,
+  status?: any,
+  limit?: string,
+  skip?: string,
 ) => {
-  let query = col.find(filter);
 
-  if (typeof limit === "string") {
-    query = query.limit(Number(limit));
-  }
-
-  if (typeof skip === "string") {
-    query = query.skip(Number(skip));
-  }
+  let query = col.find(findFilter(status))
+  if (limit) query = query.limit(Number(limit));
+  if (skip) query = query.skip(Number(skip));
 
   const sort = {
     [data_col_3.date_creation]: 1, // Desde el más antiguo hasta el más reciente
@@ -53,9 +57,9 @@ export const postQuery = (body: Pedido) => {
     [data_col_3.val_to_pay]: body.val_to_pay,
     [data_col_3.dirrection]: body.dirrection,
     [data_col_3.date_creation]: new Date(),
-    [data_col_3.last_update]: new Date()
+    [data_col_3.last_update]: new Date(),
   };
-  
+
   return query;
 };
 

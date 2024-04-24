@@ -1,6 +1,7 @@
 import { Double, ObjectId } from "mongodb";
 
-export type EstadoPedido = "enviado" | "en proceso" | undefined;
+export type EstadoPedido = "enviado" | "en proceso";
+export type PayMethod = "ContraEntega" | "Tarjeta Crédito/Débito";
 
 export type Pedido = {
   set_pedido_id: ObjectId;
@@ -13,7 +14,7 @@ export type Pedido = {
   departament_or_state: string;
   city: string;
   postal_code: string;
-  meth_pay: string;
+  meth_pay: PayMethod;
   status: string;
   val_to_pay: Double;
   dirrection: string;

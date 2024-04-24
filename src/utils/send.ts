@@ -19,6 +19,18 @@ export const sendGetResponse = (
   }
 };
 
+export const sendOneResponse = (
+  results: object,
+  res: Response,
+  errorMessage?: string
+): void => {
+  if (results) {
+    res.status(200).json(results);
+  } else {
+    handle404Status(res, errorMessage);
+  }
+}
+
 export const sendUpdateResponse = (
   results: any,
   res: Response,
