@@ -1,26 +1,21 @@
-import { Request, Response } from "express";
 import dotenv from "dotenv";
 import MongodbConnection from "../config/mongo";
+import { Request, Response } from "express";
 import { collection, DB } from "../config/config";
+import { executeQuery, findone, updateQuery } from "../utils/db.utils";
+import { handle500Status } from "../utils/Erros";
+import { ObjectId } from "mongodb";
+import { postModel } from "../models/models";
 import {
   sendUpdateResponse,
   sendGetResponse,
   sendErrorPost,
   sendErrorDeleted,
-  sendOneResponse,
 } from "../utils/send";
-import {
-  executeQuery,
-  findone,
-  postQuery,
-  updateQuery,
-} from "../utils/db.utils";
-import { handle500Status } from "../utils/Erros";
-import { ObjectId } from "mongodb";
 
 dotenv.config();
 
-// Establecimiento de conexión con la base de datos
+// Estable  cimiento de conexión con la base de datos
 const CON_STRING = process.env.CON_STRING!;
 MongodbConnection.getIntance().connect(CON_STRING);
 const db = MongodbConnection.getIntance().getConnection(DB!);
@@ -32,25 +27,16 @@ export const findAll = async (req: Request, res: Response) => {
     let results = null;
 
     const col = await db.collection(collection.pedidos);
+
     if (id) {
-      results = await col.findOne(findone(<string>id));
-      if (!results) {
-        return  sendOneResponse(results, res, "Document not found")
-      }
-      console.log(results);
-      return sendOneResponse(results, res);
+      results = await col.aggregate(findone(<string>id)).toArray();
+      return sendGetResponse(results, res, "Document not found");
+    } else {
+      results = await col
+        .aggregate(executeQuery(status, limit, skip))
+        .toArray();
     }
-
-    results = await executeQuery(
-      col,
-      status,
-      <string>limit,
-      <string>skip
-    );
-
     console.log(results);
-    
-
     sendGetResponse(<any>results, res, "No documents to show"); // send response and error 404 handle
   } catch (error: any) {
     handle500Status(error, res); // handle error
@@ -62,7 +48,7 @@ export const createPedido = async (req: Request, res: Response) => {
   try {
     const col = await db.collection(collection.pedidos);
 
-    const query = postQuery(req.body);
+    const query = postModel(req.body);
 
     const result = await col.insertOne(query);
 

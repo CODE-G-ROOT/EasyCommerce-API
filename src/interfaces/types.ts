@@ -2,6 +2,9 @@ import { Double, ObjectId } from "mongodb";
 
 export type EstadoPedido = "enviado" | "en proceso";
 export type PayMethod = "ContraEntega" | "Tarjeta Crédito/Débito";
+export type AggregationStage = {
+  [key: string]: any;
+};
 
 export type Pedido = {
   set_pedido_id: ObjectId;
