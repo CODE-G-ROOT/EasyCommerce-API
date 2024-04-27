@@ -2,7 +2,7 @@ import { ObjectId } from "mongodb";
 import { data_col_3 } from "../config/config";
 import { Pedido } from "../interfaces/types";
 
-export const postModel = (body: Pedido) => {
+export const postPedidoModel = (body: Pedido) => {
   const query = {
     [data_col_3.set_pedido_id]: new ObjectId(body.set_pedido_id),
     [data_col_3.price]: body.price,
@@ -25,7 +25,7 @@ export const postModel = (body: Pedido) => {
   return query;
 };
 
-export const agregateModel = {
+export const agregatePedidoModel = {
   $project: {
     id: "$_id",
     _id: 0,

@@ -5,7 +5,7 @@ import { collection, data_col_3, DB } from "../config/config";
 import { executeQuery, findone, updateQuery } from "../utils/db.utils";
 import { handle500Status } from "../utils/Erros";
 import { ObjectId } from "mongodb";
-import { agregateModel, postModel } from "../models/models";
+import { agregatePedidoModel, postPedidoModel } from "../models/models";
 import {
   sendUpdateResponse,
   sendGetResponse,
@@ -29,14 +29,14 @@ export const findAll = async (req: Request, res: Response) => {
     const col = await db.collection(collection.pedidos);
 
     if (id) {
-      const match = [findone(<string>id), agregateModel];
+      const match = [findone(<string>id), agregatePedidoModel];
       results = await col.aggregate(match).toArray();
       return sendGetResponse(results, res, "Document not found");
     } else {
       const query = executeQuery(
         [data_col_3.status],
         [data_col_3.last_update],
-        agregateModel,
+        agregatePedidoModel,
         status,
         limit,
         skip
@@ -55,7 +55,7 @@ export const createPedido = async (req: Request, res: Response) => {
   try {
     const col = await db.collection(collection.pedidos);
 
-    const query = postModel(req.body);
+    const query = postPedidoModel(req.body);
 
     const result = await col.insertOne(query);
 
