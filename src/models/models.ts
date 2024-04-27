@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import { data_col_3 } from "../config/config";
+import { data_col_1, data_col_3 } from "../config/config";
 import { Pedido } from "../interfaces/types";
 
 export const postPedidoModel = (body: Pedido) => {
@@ -15,7 +15,7 @@ export const postPedidoModel = (body: Pedido) => {
     [data_col_3.city]: body.city,
     [data_col_3.postal_code]: body.postal_code,
     [data_col_3.meth_pay]: body.meth_pay,
-    [data_col_3.status]: body.status,
+    [data_col_3.status_col_3]: body.status,
     [data_col_3.val_to_pay]: body.val_to_pay,
     [data_col_3.dirrection]: body.dirrection,
     [data_col_3.date_creation]: new Date(),
@@ -39,10 +39,23 @@ export const agregatePedidoModel = {
     city: `$${[data_col_3.city]}`,
     postal_code: `$${[data_col_3.postal_code]}`,
     meth_pay: `$${[data_col_3.meth_pay]}`,
-    status: `$${[data_col_3.status]}`,
+    status: `$${[data_col_3.status_col_3]}`,
     val_to_pay: `$${[data_col_3.val_to_pay]}`,
     dirrection: `$${[data_col_3.dirrection]}`,
     date_creation: `$${[data_col_3.date_creation]}`,
     last_update: `$${[data_col_3.last_update]}`,
   },
 };
+
+export const agregateProductModel = {
+  $project: {
+    id: "$_id",
+    _id : 0,
+    product_name: `$${[data_col_1.pack_name]}`,
+    priceByUnit: `$${[data_col_1.price]}`,
+    offerPrice: `$${[data_col_1.offert]}`,
+    status: `$${[data_col_1.status]}`,
+    creationDate: `$${[data_col_1.creationDate]}`,
+    lastUpdate: `$${[data_col_1.lastUpdate]}`,
+  }
+}

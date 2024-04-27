@@ -34,7 +34,7 @@ export const findAll = async (req: Request, res: Response) => {
       return sendGetResponse(results, res, "Document not found");
     } else {
       const query = executeQuery(
-        [data_col_3.status],
+        [data_col_3.status_col_3],
         [data_col_3.last_update],
         agregatePedidoModel,
         status,
@@ -79,13 +79,12 @@ export const updateStatus = async (req: Request, res: Response) => {
 
     const [filter, update] = updateQuery(
       objectId,
-      [data_col_3.status],
+      [data_col_3.status_col_3],
       [data_col_3.last_update]
     );
 
     const col = await db.collection(collection.pedidos);
     const result = await col.updateOne(filter, update);
-    console.log(result);
 
     sendUpdateResponse(result, res, "Document updated", "Document don't found");
   } catch (error: any) {

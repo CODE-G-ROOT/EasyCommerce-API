@@ -12,6 +12,8 @@ const {
   CMP4_COLLECTION1,
   CMP5_COLLECTION1,
   CMP6_COLLECTION1,
+  CMP7_COLLECTION1,
+  CMP8_COLLECTION1,
   CMP1_COLLECTION3,
   CMP2_COLLECTION3,
   CMP3_COLLECTION3,
@@ -41,6 +43,8 @@ export const data_col_1 = {
   offert: CMP4_COLLECTION1,
   img: CMP5_COLLECTION1,
   status: CMP6_COLLECTION1,
+  creationDate: CMP7_COLLECTION1,
+  lastUpdate: CMP8_COLLECTION1
 };
 
 export const data_col_3 = {
@@ -55,7 +59,7 @@ export const data_col_3 = {
   city: CMP9_COLLECTION3,
   postal_code: CMP10_COLLECTION3,
   meth_pay: CMP11_COLLECTION3,
-  status: CMP12_COLLECTION3,
+  status_col_3: CMP12_COLLECTION3,
   val_to_pay: CMP13_COLLECTION3,
   dirrection: CMP14_COLLECTION3,
   date_creation: CMP15_COLLECTION3,
