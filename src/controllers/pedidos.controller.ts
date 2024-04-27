@@ -1,11 +1,11 @@
 import dotenv from "dotenv";
 import MongodbConnection from "../config/mongo";
 import { Request, Response } from "express";
-import { collection, DB } from "../config/config";
+import { collection, data_col_3, DB } from "../config/config";
 import { executeQuery, findone, updateQuery } from "../utils/db.utils";
 import { handle500Status } from "../utils/Erros";
 import { ObjectId } from "mongodb";
-import { postModel } from "../models/models";
+import { agregateModel, postModel } from "../models/models";
 import {
   sendUpdateResponse,
   sendGetResponse,
@@ -29,14 +29,21 @@ export const findAll = async (req: Request, res: Response) => {
     const col = await db.collection(collection.pedidos);
 
     if (id) {
-      results = await col.aggregate(findone(<string>id)).toArray();
+      const match = [findone(<string>id), agregateModel];
+      results = await col.aggregate(match).toArray();
       return sendGetResponse(results, res, "Document not found");
     } else {
-      results = await col
-        .aggregate(executeQuery(status, limit, skip))
-        .toArray();
+      const query = executeQuery(
+        [data_col_3.status],
+        [data_col_3.last_update],
+        agregateModel,
+        status,
+        limit,
+        skip
+      );
+      results = await col.aggregate(query).toArray();
     }
-    console.log(results);
+
     sendGetResponse(<any>results, res, "No documents to show"); // send response and error 404 handle
   } catch (error: any) {
     handle500Status(error, res); // handle error
@@ -70,7 +77,11 @@ export const updateStatus = async (req: Request, res: Response) => {
 
     const objectId = new ObjectId(id);
 
-    const [filter, update] = updateQuery(objectId);
+    const [filter, update] = updateQuery(
+      objectId,
+      [data_col_3.status],
+      [data_col_3.last_update]
+    );
 
     const col = await db.collection(collection.pedidos);
     const result = await col.updateOne(filter, update);

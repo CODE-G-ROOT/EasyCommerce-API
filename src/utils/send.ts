@@ -7,6 +7,12 @@ import {
 import { NextFunction, Response } from "express";
 import { Document } from "mongodb";
 
+/**
+ * Sends a response with the retrieved documents in case of a successful GET request.
+ * @param results The array of documents retrieved from the database.
+ * @param res The response object to send the response.
+ * @param errorMessage Optional. The error message to send in case no documents are found.
+ */
 export const sendGetResponse = (
   results: Document[],
   res: Response,
@@ -19,6 +25,13 @@ export const sendGetResponse = (
   }
 };
 
+/**
+ * Sends a response after an update operation.
+ * @param results The result of the update operation.
+ * @param res The response object to send the response.
+ * @param queryMessage Optional. The success message to send in case of a successful update.
+ * @param errorMessage Optional. The error message to send in case the update operation fails.
+ */
 export const sendUpdateResponse = (
   results: any,
   res: Response,
@@ -32,6 +45,13 @@ export const sendUpdateResponse = (
   }
 };
 
+/**
+ * Sends a response after a POST request.
+ * @param result The result of the POST operation.
+ * @param res The response object to send the response.
+ * @param queryMessage Optional. The success message to send in case of a successful POST operation.
+ * @param errorMessage Optional. The error message to send in case the POST operation fails.
+ */
 export const sendErrorPost = (
   result: any,
   res: Response,
@@ -39,13 +59,18 @@ export const sendErrorPost = (
   errorMessage?: string
 ) => {
   if (result.acknowledged === true) {
-    
     handle200Status(res, queryMessage);
   } else {
     handle400Status(res, errorMessage);
   }
 };
 
+/**
+ * Sets a timeout for the response.
+ * @param time The time in seconds to set the timeout for the response.
+ * @param res The response object to set the timeout on.
+ * @param next The next function in the middleware chain.
+ */
 export const setTime = (time: number, res: Response, next: NextFunction) => {
   time = time * 1000;
   res.setTimeout(time, () => {
@@ -54,6 +79,13 @@ export const setTime = (time: number, res: Response, next: NextFunction) => {
   next();
 };
 
+/**
+ * Sends a response after a delete operation.
+ * @param res The response object to send the response.
+ * @param result The result of the delete operation.
+ * @param queryMessage Optional. The success message to send in case of a successful delete operation.
+ * @param errorMessage Optional. The error message to send in case the delete operation fails.
+ */
 export const sendErrorDeleted = (
   res: Response,
   result: any,
@@ -61,10 +93,8 @@ export const sendErrorDeleted = (
   errorMessage?: string
 ) => {
   if (result.deletedCount === 1) {
-    // Si deletedCount es 1, significa que se eliminó correctamente
     handle200Status(res, queryMessage);
   } else {
-    // Si deletedCount no es 1, significa que no se eliminó ningún documento
     handle404Status(res, errorMessage);
   }
 };
