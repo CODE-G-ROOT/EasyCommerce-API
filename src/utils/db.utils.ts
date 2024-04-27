@@ -32,16 +32,11 @@ export const executeQuery = (
   limit?: any,
   skip?: any
 ): AggregationStage[] => {
-  status = status || "en proceso";
+  // status = status || "en proceso";
   limit = limit || "20";
   skip = skip || "0";
 
   const query: AggregationStage[] = [
-    {
-      $match: {
-        [statusfield]: status,
-      },
-    },
     {
       $limit: parseInt(<any>limit),
     },
@@ -56,6 +51,16 @@ export const executeQuery = (
     },
     proyect,
   ];
+
+  if (status) {
+    query.splice(0, 0, {
+      $match: {
+        [statusfield]: status,
+      },
+    });
+  }
+
+  console.log(query);
 
   return query;
 };

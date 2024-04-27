@@ -1,15 +1,9 @@
 import { Router } from 'express'
+import { findAll } from '../controllers/products.controller';
 
 const products = Router()
 
-products.get('/', (_req, res) => {
-  res.json('Mostrar todos los productos');
-}) // Muestra todos los productos disponibles
-
-products.get('/:id', (req, res) => {
-  const { id } = req.params
-	res.json('mostrar un producto en específico' + id)
-}); // Muestra un producto en específico
+products.get('/', findAll) // Muestra todos los productos disponibles
 
 products.get('/img/:id', (req, res) => {
   const { id } = req.params
