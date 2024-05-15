@@ -3,7 +3,6 @@ import { Double } from "mongodb";
 import { EstadoProduct } from "../interfaces/types";
 import { validateIfOneOrMoreFieldsExist, validateResult } from "../utils/validate.helper";
 import { NextFunction, Request, Response } from "express";
-import { ChainCondition } from "express-validator/src/context-items";
 
 // {
 //     "product_name": "Tonico Mechudos",
