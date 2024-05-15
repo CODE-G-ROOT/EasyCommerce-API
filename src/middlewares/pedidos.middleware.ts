@@ -4,72 +4,109 @@ import { check, query } from "express-validator";
 import { Double } from "mongodb";
 import { EstadoPedido, PayMethod } from "../interfaces/types";
 
-// export const getParams = (req: Request, res: Response, next: NextFunction): void => {
-//     const { limit, skip, status } = req.query;
-
-// };
+// const allowedFields = [
+//   "set_pedido_id",
+//   "price",
+//   "client_name",
+//   "client_lastname",
+//   "email",
+//   "phone",
+//   "country",
+//   "departament_or_state",
+//   "city",
+//   "postal_code",
+//   "meth_pay",
+//   "status",
+//   "val_to_pay",
+//   "dirrection"
+// ];
 
 export const validationBody = [
-  check("set_pedido_id").exists().isString().isBase64().not().isEmpty(),
+  check("set_pedido_id")
+    .exists()
+    .isString()
+    .isMongoId()
+    .notEmpty(),
   check("price")
     .exists()
     .isNumeric()
+    .isDecimal({
+      decimal_digits: "2",
+      force_decimal: true,
+    })
     .custom((value) => <Double>value)
-    .not()
-    .isEmpty(),
-  check("client_name").exists().isString().isLength({ min: 2 }).not().isEmpty(),
-  check("client_lastname")
+    .notEmpty(),
+  check("client_name")
     .exists()
     .isString()
     .isLength({ min: 2 })
     .not()
     .isEmpty(),
-  check("email").exists().isEmail().not().isEmpty(),
+  check("client_lastname")
+    .exists()
+    .isString()
+    .isLength({ min: 2 })
+    .notEmpty(),
+  check("email")
+    .exists()
+    .isEmail()
+    .not()
+    .isEmpty(),
   check("phone")
     .exists()
     .isString()
     .isLength({ min: 10, max: 15 })
-    .not()
-    .isEmpty(),
-  check("country").exists().isString().isLength({ min: 2 }).not().isEmpty(),
+    .notEmpty(),
+  check("country")
+    .exists()
+    .isString()
+    .isLength({ min: 2 })
+    .notEmpty(),
   check("departament_or_state")
     .exists()
     .isString()
     .isLength({ min: 4 })
-    .not()
-    .isEmpty(),
-  check("city").exists().isString().isLength({ min: 4 }).not().isEmpty(),
+    .notEmpty(),
+  check("city")
+    .exists()
+    .isString()
+    .isLength({ min: 4 })
+    .notEmpty(),
   check("postal_code")
     .exists()
     .isLength({ min: 4 })
     .isPostalCode("any")
-    .not()
-    .isEmpty(),
+    .notEmpty(),
   check("meth_pay")
     .exists()
     .isString()
     .custom((value) => <PayMethod>value)
-    .not()
-    .isEmpty(),
+    .notEmpty(),
   check("status")
     .exists()
     .isString()
     .custom((value) => <EstadoPedido>value)
-    .not()
-    .isEmpty(),
+    .notEmpty(),
   check("val_to_pay")
     .exists()
     .isNumeric()
+    .isDecimal({
+      decimal_digits: "2",
+      force_decimal: true,
+    })
     .custom((value) => <Double>value)
-    .not()
-    .isEmpty(),
-  check("dirrection").exists().isString().not().isEmpty(),
+    .notEmpty(),
+  check("dirrection")
+    .exists()
+    .isString()
+    .notEmpty(),
   (req: Request, res: Response, next: NextFunction) => {
     validateResult(req, res, next);
   },
 ];
 
 export const validationParams = [
+  query().notEmpty(),
   query("limit")
     .optional()
     .isInt()
@@ -81,20 +118,18 @@ export const validationParams = [
   query("status")
     .optional()
     .isString()
-    .isIn(["enviado", "en proceso"])
-    .withMessage("The 'status' param, must be 'enviado' or 'en proceso'"),
+    .isIn(["enviado", "no enviado"])
+    .withMessage("The 'status' param, must be 'enviado' or 'no enviado'"),
   query("id")
     .optional()
     .isString()
     .isBase64()
     .withMessage("Id param must be base 64 string"),
+  query("name")
+    .optional()
+    .isString()
+    .withMessage("Product name param must be type string"),
   (req: Request, res: Response, next: NextFunction) => {
     validateResult(req, res, next);
   },
 ];
-
-export const postBody = () => {};
-
-export const putParams = () => {};
-
-export const deleteParams = () => {};

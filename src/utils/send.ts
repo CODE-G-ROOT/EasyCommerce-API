@@ -36,8 +36,9 @@ export const sendUpdateResponse = (
   results: any,
   res: Response,
   queryMessage?: string,
-  errorMessage?: string
+  errorMessage?: string,
 ): void => {
+
   if (results.matchedCount > 0) {
     handle200Status(res, queryMessage);
   } else {

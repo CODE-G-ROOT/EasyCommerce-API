@@ -2,9 +2,8 @@ import dotenv from "dotenv";
 import MongodbConnection from "../config/mongo";
 import { Request, Response } from "express";
 import { collection, data_col_3, DB } from "../config/config";
-import { executeQuery, findone, updateQuery } from "../utils/db.utils";
+import { executeQuery, findById, setPedido } from "../utils/db.utils";
 import { handle500Status } from "../utils/Erros";
-import { ObjectId } from "mongodb";
 import { agregatePedidoModel, postPedidoModel } from "../models/models";
 import {
   sendUpdateResponse,
@@ -12,6 +11,7 @@ import {
   sendErrorPost,
   sendErrorDeleted,
 } from "../utils/send";
+import { EstadoProduct } from "../interfaces/types";
 
 dotenv.config();
 
@@ -20,16 +20,22 @@ const CON_STRING = process.env.CON_STRING!;
 MongodbConnection.getIntance().connect(CON_STRING);
 const db = MongodbConnection.getIntance().getConnection(DB!);
 
+const validateConnection = () => {
+  MongodbConnection.getIntance().ensureConnection(DB!);
+};
+
 // GET
 export const findAll = async (req: Request, res: Response) => {
   try {
     const { limit, skip, status, id } = req.query;
+
     let results = null;
 
+    validateConnection();
     const col = await db.collection(collection.pedidos);
 
     if (id) {
-      const match = [findone(<string>id), agregatePedidoModel];
+      const match = [findById(<string>id), agregatePedidoModel];
       results = await col.aggregate(match).toArray();
       return sendGetResponse(results, res, "Document not found");
     } else {
@@ -37,10 +43,11 @@ export const findAll = async (req: Request, res: Response) => {
         [data_col_3.status_col_3],
         [data_col_3.last_update],
         agregatePedidoModel,
-        status,
+        <EstadoProduct>status,
         limit,
         skip
       );
+
       results = await col.aggregate(query).toArray();
     }
 
@@ -53,6 +60,8 @@ export const findAll = async (req: Request, res: Response) => {
 // POST
 export const createPedido = async (req: Request, res: Response) => {
   try {
+    validateConnection();
+
     const col = await db.collection(collection.pedidos);
 
     const query = postPedidoModel(req.body);
@@ -75,15 +84,12 @@ export const updateStatus = async (req: Request, res: Response) => {
   try {
     const id = req.query.id as string;
 
-    const objectId = new ObjectId(id);
+    const [filter, update] = setPedido(id);
 
-    const [filter, update] = updateQuery(
-      objectId,
-      [data_col_3.status_col_3],
-      [data_col_3.last_update]
-    );
+    validateConnection();
 
     const col = await db.collection(collection.pedidos);
+
     const result = await col.updateOne(filter, update);
 
     sendUpdateResponse(result, res, "Document updated", "Document don't found");
@@ -96,12 +102,10 @@ export const deletePedido = async (req: Request, res: Response) => {
   try {
     const id = req.query.id as string;
 
-    const objectId = {
-      _id: new ObjectId(id),
-    };
+    validateConnection();
 
     const col = await db.collection(collection.pedidos);
-    const result = await col.deleteOne(objectId);
+    const result = await col.deleteOne(id);
 
     sendErrorDeleted(
       res,

@@ -1,5 +1,6 @@
 import { Router } from 'express'
-import { findAll } from '../controllers/products.controller';
+import { findAll, createProduct, updateProduct, deleteProduct } from '../controllers/products.controller';
+import { validateIdDelited, validationProduct, validationPUTProduct } from '../middlewares/products.middleware';
 
 const products = Router()
 
@@ -10,18 +11,10 @@ products.get('/img/:id', (req, res) => {
 	res.json('mostrar un producto en específico' + id)
 }); // Muestra un producto en específico
 
-products.post('/', (_req, res) => {
-  res.json("you're on post oproduct")
-});
+products.post('/', validationProduct, createProduct);
 
-products.put('/:id', (req, res) => {
-  const { id } = req.params
-	res.json("you're on put products" + id)
-});
+products.put('/', validationPUTProduct, updateProduct);
 
-products.delete('/:id', (req, res) => {
-  const { id } = req.params
-	res.json("you're on delete products " + id)
-});
+products.delete('/',validateIdDelited, deleteProduct);
 
 export default products

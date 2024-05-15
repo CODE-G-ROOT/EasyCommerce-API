@@ -5,11 +5,13 @@ export default class MongodbConnection {
   private connection: any;
   private idleTimeout: number;
   private monitoringTimer: NodeJS.Timeout | null;
+  private isConnected: boolean;
 
   constructor() {
     this.connection = null;
     this.idleTimeout = 60 * 1000 * 60; // Tiempo de espera en milisegundos (1 Hora)
     this.monitoringTimer = null;
+    this.isConnected = false;
   }
 
   public static getIntance(): MongodbConnection {
@@ -30,6 +32,7 @@ export default class MongodbConnection {
           },
         });
         this.startMonitoring();
+        this.isConnected = true;
         console.log("MongoDB has been conected");
       }
     } catch (error: any) {
@@ -70,6 +73,10 @@ export default class MongodbConnection {
       clearInterval(this.monitoringTimer);
       console.log("Monitoreo detenido");
     }
+  }
+
+  public async ensureConnection(url:string):Promise<void> {
+    if(!this.isConnected) await this.connect(url)
   }
 
   public getConnection(dbname: string) {

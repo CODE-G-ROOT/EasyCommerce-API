@@ -1,6 +1,7 @@
 import { Double, ObjectId } from "mongodb";
 
-export type EstadoPedido = "enviado" | "en proceso";
+export type EstadoPedido = "enviado" | "validando" | "incidencia";
+export type EstadoProduct = "activo" | "inactivo";
 export type PayMethod = "ContraEntega" | "Tarjeta Crédito/Débito";
 export type AggregationStage = {
   [key: string]: any;
@@ -23,4 +24,15 @@ export type Pedido = {
   dirrection: string;
   date_creation: Date;
   last_update: Date;
+};
+
+export type Product = {
+  product_name: string;
+  priceByUnit: Double;
+  offerPrice: Double;
+  status: EstadoProduct;
+  img: string;
+  description: string;
+  creationDate: Date;
+  lastUpdate: Date;
 };

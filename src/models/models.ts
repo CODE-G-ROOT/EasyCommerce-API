@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb";
 import { data_col_1, data_col_3 } from "../config/config";
-import { Pedido } from "../interfaces/types";
+import { Pedido, Product } from "../interfaces/types";
 
 export const postPedidoModel = (body: Pedido) => {
   const query = {
@@ -47,15 +47,32 @@ export const agregatePedidoModel = {
   },
 };
 
+export const postProductModel = (body: Product) => {
+  const query = {
+    [data_col_1.pack_name]: body.product_name.toLowerCase(),
+    [data_col_1.price]: body.priceByUnit,
+    [data_col_1.offert]: body.offerPrice,
+    [data_col_1.status]: body.status,
+    [data_col_1.img]: body.img,
+    [data_col_1.description]: body.description,
+    [data_col_1.creationDate]: new Date(),
+    [data_col_1.lastUpdate]: new Date(),
+  };
+
+  return query;
+};
+
 export const agregateProductModel = {
   $project: {
     id: "$_id",
-    _id : 0,
+    _id: 0,
     product_name: `$${[data_col_1.pack_name]}`,
     priceByUnit: `$${[data_col_1.price]}`,
     offerPrice: `$${[data_col_1.offert]}`,
     status: `$${[data_col_1.status]}`,
+    img: `$${[data_col_1.img]}`,
+    description: `$${[data_col_1.description]}`,
     creationDate: `$${[data_col_1.creationDate]}`,
     lastUpdate: `$${[data_col_1.lastUpdate]}`,
   }
-}
+};

@@ -2,105 +2,144 @@ import dotenv from "dotenv";
 import MongodbConnection from "../config/mongo";
 import { Response, Request } from "express";
 import { collection, data_col_1, DB } from "../config/config";
-import { sendGetResponse } from "../utils/send";
-import { handle500Status } from "../utils/Erros";
-import { executeQuery, findone } from "../utils/db.utils";
-import { agregateProductModel } from "../models/models";
+import {
+  sendErrorDeleted,
+  sendErrorPost,
+  sendGetResponse,
+  sendUpdateResponse,
+} from "../utils/send";
+import { duplicateKey, handle302Status, handle500Status } from "../utils/Erros";
+import {
+  executeQuery,
+  findById,
+  findByName,
+  setProduct,
+} from "../utils/db.utils";
+import { agregateProductModel, postProductModel } from "../models/models";
+import { EstadoProduct } from "../interfaces/types";
+import { ObjectId } from "mongodb";
 
 dotenv.config();
 
 const CON_STRING = process.env.CON_STRING!;
 MongodbConnection.getIntance().connect(CON_STRING);
+
 const db = MongodbConnection.getIntance().getConnection(DB!);
+
+const validateConnection = () => {
+  MongodbConnection.getIntance().ensureConnection(DB!);
+};
 
 export const findAll = async (req: Request, res: Response) => {
   try {
-    const { limit, skip, status, id } = req.query;
+    validateConnection();
+
+    const { limit, skip, status, id, name } = req.query;
     let results = null;
 
     const col = await db.collection(collection.products);
 
     if (id) {
-      const match = [findone(<string>id), agregateProductModel];
+      const match = [findById(<string>id), agregateProductModel];
       results = await col.aggregate(match).toArray();
 
       return sendGetResponse(results, res, "Document not found");
-    } else {
-      const query = executeQuery(
-        [data_col_1.status],
-        [data_col_1.lastUpdate],
-        agregateProductModel,
-        status,
-        limit,
-        skip
-      );
-
-      results = await col.aggregate(query).toArray();
     }
-    
+
+    if (name) {
+      const Name = <string>name;
+      const Field = <any>[data_col_1.pack_name];
+      const match = [findByName(Name, Field), agregateProductModel];
+
+      results = await col.aggregate(match).toArray();
+      return sendGetResponse(results, res, "Document not found");
+    }
+
+    const query = executeQuery(
+      [data_col_1.status],
+      [data_col_1.lastUpdate],
+      agregateProductModel,
+      <EstadoProduct>status,
+      limit,
+      skip
+    );
+
+    results = await col.aggregate(query).toArray();
+
     sendGetResponse(<any>results, res, "No documents to show"); // send response and error 404 handle
   } catch (error: any) {
     handle500Status(error, res); // handle error
   }
 };
 
-// // POST
-// export const createPedido = async (req: Request, res: Response) => {
-//   try {
-//     const col = await db.collection(collection.pedidos);
+// POST
+export const createProduct = async (req: Request, res: Response) => {
+  try {
+    validateConnection();
+    const col = await db.collection(collection.products);
 
-//     const query = postPedidoModel(req.body);
+    const productname = req.body.product_name.toLowerCase();
 
-//     const result = await col.insertOne(query);
+    const existProduct = await col.findOne({
+      [data_col_1.pack_name]: productname,
+    });
 
-//     sendErrorPost(
-//       result,
-//       res,
-//       "The pedido has been created",
-//       "Error to create the pedido"
-//     );
-//   } catch (error: any) {
-//     handle500Status(error, res);
-//   }
-// };
+    if (existProduct !== null) {
+      return handle302Status(
+        res,
+        `${req.body.product_name} product already exist.`
+      );
+    }
 
-// // PUT
-// export const updateStatus = async (req: Request, res: Response) => {
-//   try {
-//     const id = req.query.id as string;
+    const query = postProductModel(req.body);
 
-//     const objectId = new ObjectId(id);
+    const result = await col.insertOne(query);
+    sendErrorPost(result, res);
+  } catch (error: any) {
+    const message = error.message.split(" ");
+    if (message[0] === duplicateKey) handle302Status(res);
+    else handle500Status(error, res);
+  }
+};
 
-//     const [filter, update] = updateQuery(objectId);
+// PUT
+export const updateProduct = async (req: Request, res: Response) => {
+  try {
+    const id = req.query.id as string;
+    const body: any = req.body;
 
-//     const col = await db.collection(collection.pedidos);
-//     const result = await col.updateOne(filter, update);
-//     console.log(result);
+    const [filter, update] = setProduct(id, body);
 
-//     sendUpdateResponse(result, res, "Document updated", "Document don't found");
-//   } catch (error: any) {
-//     handle500Status(error, res);
-//   }
-// };
+    validateConnection();
+    const col = await db.collection(collection.products);
 
-// export const deletePedido = async (req: Request, res: Response) => {
-//   try {
-//     const id = req.query.id as string;
+    const result = await col.updateOne(filter, update);
 
-//     const objectId = {
-//       _id: new ObjectId(id),
-//     };
+    sendUpdateResponse(result, res, "Document updated", "Document don't found");
+  } catch (error: any) {
+    handle500Status(error, res);
+  }
+};
 
-//     const col = await db.collection(collection.pedidos);
-//     const result = await col.deleteOne(objectId);
+export const deleteProduct = async (req: Request, res: Response) => {
+  try {
+    const id = req.query.id as string;
 
-//     sendErrorDeleted(
-//       res,
-//       result,
-//       "The document has been deleted",
-//       "Has been a error to delete the document"
-//     );
-//   } catch (error: any) {
-//     handle500Status(error, res);
-//   }
-// };
+    const objectId = {
+      _id: new ObjectId(id),
+    };
+
+    validateConnection();
+    const col = await db.collection(collection.pedidos);
+    const result = await col.deleteOne(objectId);
+
+    sendErrorDeleted(
+      res,
+      result,
+      "The document has been deleted",
+      "Has been a error to delete the document"
+    );
+  } catch (error: any) {
+    handle500Status(error, res);
+  }
+};
