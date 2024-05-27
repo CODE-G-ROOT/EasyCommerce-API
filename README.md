@@ -1,23 +1,17 @@
-# Notas
+# Documentación de la API
 
-- QUEDA PENDIENTE, CONFIGURAR LO DE LAS IMÁGENES:
-    1. QUE SE MUESTREN
-    2. QUE SE PUEDAN INSERTAR Y ALMACENAR EN EL BACKEND
-    3. QUE SE PUEDEN ACTUALIZAR Y ELIMINAR
+## Descripción General
 
-- CREAR USUARIOS 
-    - ADMIN
-    - USER -> IMPLEMENTAR FUNCIONALIDAD EN UN FUTURO (PARA QUE PODAMOS VENDER EL SERVICIO)
-    - CLIENT
+La API de backend proporciona una solución segura, eficiente y orientada al usuario para gestionar pedidos y productos en una aplicación de ecommerce centrada en el dropshipping. A continuación, destacamos algunas de las características clave que hacen que esta API sea una opción segura, confiable y fácil de usar:
 
-- Es importante RECORDAR que hay que tener un usuario específico para el cliente, para que de esta forma, se pueda evitar ataques DDOS
+- **Seguridad Robusta:** La API ha sido configurada para garantizar la seguridad de los datos del usuario. No permite el acceso directo a la base de datos ni la exposición de los valores de los campos, lo que protege la integridad y privacidad de la información del sistema.
 
-- crear users col y agregar los usuarios a los productos,a demás de que por seguridad, para hacer un push o un get a la db con la api, se va a necesitar un usuario en concreto que será definido por defecto.
-- sin usuario no hay gestion.
+- **Almacenamiento Seguro de Imágenes:** Las imágenes asociadas a los productos se almacenan de forma segura en Cloudinary, un servicio confiable de gestión de activos digitales en la nube. Cloudinary ofrece medidas de seguridad avanzadas, como encriptación de datos en reposo y en tránsito, para garantizar la protección de las imágenes del usuario contra accesos no autorizados.
 
+- **Validaciones Estrictas:** La API implementa validaciones estrictas en las peticiones para garantizar la integridad y consistencia de los datos. Esto incluye validaciones de tipo de datos, campos requeridos y formatos de entrada, asegurando que solo se procesen peticiones válidas y que los datos almacenados sean precisos y coherentes.
 
-- Recordar crear las rutas dinámicas para las imágenes
-- Además cuando se vaya a insertar el campo en la base de datos, se debe insertar la ruta completa de la imagen en la db.
+- **Manejo de Errores:** La API cuenta con un robusto sistema de manejo de errores para garantizar la seguridad del servidor y evitar caídas. Los errores se gestionan de manera adecuada, proporcionando mensajes de error claros y detallados para facilitar la resolución de problemas.
 
+- **Pedidos Temporales:** Los pedidos creados a través de la API tienen una fecha de caducidad de 30 días. Después de este período, los pedidos se eliminan automáticamente para optimizar el almacenamiento y mantener la base de datos libre de registros obsoletos.
 
-> Ahora los pedidos de la base de datos, tienen una fecha de caducidad de 30 Dias, por lo que se eliminarán automáticamente 30 días después de su última actualización. Estos valores variarán dependiendo de la cantidad de pedidos.   
+> Estas características combinadas aseguran una experiencia de usuario segura, confiable y sin problemas, protegiendo la privacidad de los datos del usuario, ofreciendo un almacenamiento seguro para las imágenes asociadas a los productos y garantizando la integridad de los datos almacenados.

@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import MongodbConnection from "../config/mongo";
 import { Response, Request } from "express";
-import { collection, data_col_1, DB } from "../config/config";
+import { collection, data_col_1 } from "../config/collections";
 import {
   sendErrorDeleted,
   sendErrorPost,
@@ -18,6 +18,8 @@ import {
 import { agregateProductModel, postProductModel } from "../models/models";
 import { EstadoProduct } from "../interfaces/types";
 import { ObjectId } from "mongodb";
+import { DB } from "../utils/utils";
+import { handleFileUpload } from "../utils/cloudinary";
 
 dotenv.config();
 
@@ -91,7 +93,8 @@ export const createProduct = async (req: Request, res: Response) => {
       );
     }
 
-    const query = postProductModel(req.body);
+    const files = await handleFileUpload(req);
+    const query = postProductModel(req.body, files);
 
     const result = await col.insertOne(query);
     sendErrorPost(result, res);
@@ -99,6 +102,7 @@ export const createProduct = async (req: Request, res: Response) => {
     const message = error.message.split(" ");
     if (message[0] === duplicateKey) handle302Status(res);
     else handle500Status(error, res);
+    // console.dirxml(error.errInfo.details.schemaRulesNotSatisfied[0]);
   }
 };
 

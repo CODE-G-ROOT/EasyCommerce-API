@@ -1,9 +1,5 @@
-import dotenv from "dotenv";
+import { pedidos_collection } from "../utils/utils";
 
-dotenv.config();
-
-export const { SERVER_CONFIG, CON_STRING, DB, CAMPOS_DB } = process.env!;
-export const pedidos_collection = JSON.parse(CAMPOS_DB!);
 const {
   COLLECTION1,
   COLLECTION3,
@@ -67,6 +63,3 @@ export const data_col_3 = {
   date_creation: CMP15_COLLECTION3,
   last_update: CMP16_COLLECTION3,
 };
-
-const server = JSON.parse(SERVER_CONFIG!);
-export const { host, port } = server;

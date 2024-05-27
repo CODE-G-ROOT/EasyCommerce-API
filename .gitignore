@@ -4,3 +4,4 @@ package-lock.json
 /build*
 .env
 pnpm-lock.yaml  
+NOTES.md

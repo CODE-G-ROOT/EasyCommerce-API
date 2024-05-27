@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { host, port } from '../config/config';
+import { host, port } from '../utils/utils';
 
 const api = Router()
 

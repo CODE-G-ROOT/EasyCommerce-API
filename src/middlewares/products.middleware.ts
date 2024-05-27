@@ -12,6 +12,10 @@ import { NextFunction, Request, Response } from "express";
 //     "description": "hola"
 // }
 
+const changeStringToNumber = (value: any) => {
+  return Number(<Double>value);
+}
+
 const allowedFields = [
   "product_name",
   "priceByUnit",
@@ -25,23 +29,20 @@ export const validationProduct = [
   check("product_name").exists().isString().notEmpty(),
   check("priceByUnit")
     .exists()
-    .isNumeric()
+    .customSanitizer(changeStringToNumber)
     .isDecimal({
       decimal_digits: "2",
       force_decimal: true,
     })
-    .custom((value) => <Double>value)
     .notEmpty(),
   check("offerPrice")
-    .exists()
-    .isNumeric()
-    .isDecimal({
-      decimal_digits: "2",
-      force_decimal: true,
-    })
-    .custom((value) => <Double>value)
-    .notEmpty(),
-  check("img").exists().isString().notEmpty(),
+  .exists()
+  .customSanitizer(changeStringToNumber)
+  .isDecimal({
+    decimal_digits: "2",
+    force_decimal: true,
+  })
+  .notEmpty(),
   check("status")
     .exists()
     .isString()
@@ -79,7 +80,6 @@ export const validationPUTProduct = [
     })
     .custom((value) => <Double>value)
     .notEmpty(),
-  check("img").optional().isString().notEmpty(),
   check("status").optional().isString().isIn(["activo", "inactivo"]).notEmpty(),
   check("description").optional().isString().notEmpty(),
   (req: Request, res: Response, next: NextFunction) => {
@@ -88,7 +88,7 @@ export const validationPUTProduct = [
 ];
 
 export const validateIdDelited = [
-  check("id").exists().isBase64().isMongoId(),
+  check("id").exists().isMongoId(),
   (req: Request, res: Response, next: NextFunction) => {
     validateResult(req, res, next)
   }

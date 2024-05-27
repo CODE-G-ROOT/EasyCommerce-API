@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb";
 import { AggregationStage, EstadoPedido, EstadoProduct } from "../interfaces/types";
-import { data_col_1, data_col_3 } from "../config/config";
+import { data_col_1, data_col_3 } from "../config/collections";
 
 /**
  * Constructs a MongoDB aggregation stage to match a document by its ID.
