@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import MongodbConnection from "../config/mongo";
-import { uploadImage } from "../utils/cloudinary";
+import MongodbConnection from "../services/mongo";
+import { uploadImage } from "../config/cloudinary";
 import { collection, data_col_3 } from "../config/collections";
-import { executeQuery, findById, setPedido } from "../utils/db.utils";
+import { executeQuery, findById, setPedido } from "../config/db.utils";
 import { handle404Status, handle500Status } from "../utils/Erros";
 import { agregatePedidoModel, postPedidoModel } from "../models/models";
 import { EstadoProduct } from "../interfaces/types";

@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import MongodbConnection from "../config/mongo";
+import MongodbConnection from "../services/mongo";
 import { Response, Request } from "express";
 import { collection, data_col_1 } from "../config/collections";
 import {
@@ -14,12 +14,12 @@ import {
   findById,
   findByName,
   setProduct,
-} from "../utils/db.utils";
+} from "../config/db.utils";
 import { agregateProductModel, postProductModel } from "../models/models";
 import { EstadoProduct } from "../interfaces/types";
 import { ObjectId } from "mongodb";
 import { DB } from "../utils/utils";
-import { handleFileUpload } from "../utils/cloudinary";
+import { handleFileUpload } from "../config/cloudinary";
 
 dotenv.config();
 

@@ -36,3 +36,11 @@ export type Product = {
   creationDate: Date;
   lastUpdate: Date;
 };
+
+export interface UploadedImage {
+  name: string;
+  public_id: string;
+  resource_type: string;
+  bytes: number;
+  secure_url: string;
+}
