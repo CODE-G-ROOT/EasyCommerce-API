@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb";
 import { AggregationStage, EstadoPedido, EstadoProduct } from "../interfaces/types";
-import { data_col_1, data_col_3 } from "../config/collections";
+import { pedidoFields, productFields } from "./collections";
 
 /**
  * Constructs a MongoDB aggregation stage to match a document by its ID.
@@ -92,8 +92,8 @@ export const setPedido = (id: string) => {
   const update = [
     {
       $set: {
-        [data_col_3.status_col_3]: updateStatus,
-        [data_col_3.last_update]: new Date(),
+        [pedidoFields.status_col_3]: updateStatus,
+        [pedidoFields.last_update]: new Date(),
       },
     },
   ];
@@ -109,14 +109,14 @@ export const setProduct = (id: string, body: any) => {
 
   let data = {};
 
-  if (product_name) data = { [data_col_1.pack_name]: product_name };
-  else if (priceByUnit) data = { ...data, [data_col_1.price]: priceByUnit };
-  else if (offerPrice) data = { ...data, [data_col_1.offert]: offerPrice };
-  else if (status) data = { ...data, [data_col_1.status]: status };
-  else if (img) data = { ...data, [data_col_1.img]: img };
+  if (product_name) data = { [productFields.pack_name]: product_name };
+  else if (priceByUnit) data = { ...data, [productFields.price]: priceByUnit };
+  else if (offerPrice) data = { ...data, [productFields.offert]: offerPrice };
+  else if (status) data = { ...data, [productFields.status]: status };
+  else if (img) data = { ...data, [productFields.img]: img };
   else if (description)
-    data = { ...data, [data_col_1.description]: description };
-  data = { ...data, [data_col_1.creationDate]: new Date() };
+    data = { ...data, [productFields.description]: description };
+  data = { ...data, [productFields.creationDate]: new Date() };
 
   const update = [
     {

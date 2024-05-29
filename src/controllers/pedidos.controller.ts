@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import MongodbConnection from "../services/mongo";
 import { uploadImage } from "../config/cloudinary";
-import { collection, data_col_3 } from "../config/collections";
+import { collection, pedidoFields } from "../config/collections";
 import { executeQuery, findById, setPedido } from "../config/db.utils";
 import { handle404Status, handle500Status } from "../utils/Erros";
 import { agregatePedidoModel, postPedidoModel } from "../models/models";
@@ -38,8 +38,8 @@ export const findAll = async (req: Request, res: Response) => {
       return sendGetResponse(results, res, "Document not found");
     } else {
       const query = executeQuery(
-        [data_col_3.status_col_3],
-        [data_col_3.last_update],
+        [pedidoFields.status_col_3],
+        [pedidoFields.last_update],
         agregatePedidoModel,
         <EstadoProduct>status,
         limit,

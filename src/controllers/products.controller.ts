@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import MongodbConnection from "../services/mongo";
 import { Response, Request } from "express";
-import { collection, data_col_1 } from "../config/collections";
+import { collection, productFields } from "../config/collections";
 import {
   sendErrorDeleted,
   sendErrorPost,
@@ -50,7 +50,7 @@ export const findAll = async (req: Request, res: Response) => {
 
     if (name) {
       const Name = <string>name;
-      const Field = <any>[data_col_1.pack_name];
+      const Field = <any>[productFields.pack_name];
       const match = [findByName(Name, Field), agregateProductModel];
 
       results = await col.aggregate(match).toArray();
@@ -58,8 +58,8 @@ export const findAll = async (req: Request, res: Response) => {
     }
 
     const query = executeQuery(
-      [data_col_1.status],
-      [data_col_1.lastUpdate],
+      [productFields.status],
+      [productFields.lastUpdate],
       agregateProductModel,
       <EstadoProduct>status,
       limit,
@@ -83,7 +83,7 @@ export const createProduct = async (req: Request, res: Response) => {
     const productname = req.body.product_name.toLowerCase();
 
     const existProduct = await col.findOne({
-      [data_col_1.pack_name]: productname,
+      [productFields.pack_name]: productname,
     });
 
     if (existProduct !== null) {
