@@ -53,7 +53,7 @@ export const handle404Status = (res: Response, message?: string) => {
 export const handle500Status = (error: any, res: Response) => {
   console.error(
     "Error interno del servidor:",
-    error.message
+    error
     // error.errInfo.details.schemaRulesNotSatisfied[0].propertiesNotSatisfied[0].details
   );
 

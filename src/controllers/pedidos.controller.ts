@@ -40,8 +40,8 @@ export const findAll = async (req: Request, res: Response) => {
         [pedidoFields.last_update],
         agregatePedidoModel,
         <EstadoProduct>status,
-        limit,
-        skip
+        Number(limit),
+        Number(skip)
       );
 
       results = await col.aggregate(query).toArray();

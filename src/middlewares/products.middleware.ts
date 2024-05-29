@@ -4,13 +4,6 @@ import { EstadoProduct } from "../interfaces/types";
 import { validateIfOneOrMoreFieldsExist, validateResult } from "../utils/validate.helper";
 import { NextFunction, Request, Response } from "express";
 
-// {
-//     "product_name": "Tonico Mechudos",
-//     "priceByUnit": 15.99,
-//     "offerPrice": 11.99,
-//     "status": "activo",
-//     "description": "hola"
-// }
 
 const changeStringToNumber = (value: any) => {
   return Number(<Double>value);
@@ -58,7 +51,7 @@ export const validationPUTProduct = [
   query("id")
     .exists()
     .isString()
-    .isBase64()
+    .isMongoId()
     .withMessage("Id param must be base 64 string"),
   body().custom(value => validateIfOneOrMoreFieldsExist(value, allowedFields)).notEmpty(),
   check("product_name").optional().isString().notEmpty(),

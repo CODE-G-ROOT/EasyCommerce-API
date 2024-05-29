@@ -37,6 +37,7 @@ export const findAll = async (req: Request, res: Response) => {
     validateConnection();
 
     const { limit, skip, status, id, name } = req.query;
+    
     let results = null;
 
     const col = await db.collection(collection.products);
@@ -62,8 +63,8 @@ export const findAll = async (req: Request, res: Response) => {
       [productFields.lastUpdate],
       agregateProductModel,
       <EstadoProduct>status,
-      limit,
-      skip
+      Number(limit),
+      Number(skip)
     );
 
     results = await col.aggregate(query).toArray();
@@ -111,6 +112,8 @@ export const updateProduct = async (req: Request, res: Response) => {
   try {
     const id = req.query.id as string;
     const body: any = req.body;
+
+    // ! NO ACTUALIZAR IMAGENES ---> AÚN NO SE HA AGREGADO ESA FEATURE
 
     const [filter, update] = setProduct(id, body);
 
