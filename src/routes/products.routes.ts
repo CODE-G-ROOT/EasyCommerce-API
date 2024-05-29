@@ -6,11 +6,6 @@ const products = Router()
 
 products.get('/', findAll) // Muestra todos los productos disponibles
 
-products.get('/img/:id', (req, res) => {
-  const { id } = req.params
-	res.json('mostrar un producto en específico' + id)
-}); // Muestra un producto en específico
-
 products.post('/', validationProduct, createProduct);
 
 products.put('/', validationPUTProduct, updateProduct);

@@ -1,5 +1,6 @@
 {
     "conventionalCommits.scopes": [
-        "Controllers"
+        "Controllers",
+        "utils"
     ]
 }
