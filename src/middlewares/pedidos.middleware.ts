@@ -80,11 +80,13 @@ export const validationBody = [
   check("meth_pay")
     .exists()
     .isString()
+    .isIn([ 'ContraEntega','Tarjeta Crédito/Débito'])
     .custom((value) => <PayMethod>value)
     .notEmpty(),
   check("status")
     .exists()
     .isString()
+    .isIn(['no enviado','enviado'])
     .custom((value) => <EstadoPedido>value)
     .notEmpty(),
   check("val_to_pay")
