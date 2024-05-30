@@ -4,7 +4,7 @@ import { collection, pedidoFields } from "../config/collections";
 import { executeQuery, findById, setPedido } from "../config/db.utils";
 import { handle500Status } from "../utils/Erros";
 import { agregatePedidoModel, postPedidoModel } from "../models/models";
-import { EstadoProduct } from "../interfaces/types";
+import { EstadoPedido } from "../interfaces/types";
 import { DB, CON_STRING } from "../utils/utils";
 import {
   sendUpdateResponse,
@@ -39,7 +39,7 @@ export const findAll = async (req: Request, res: Response) => {
         [pedidoFields.status_col_3],
         [pedidoFields.last_update],
         agregatePedidoModel,
-        <EstadoProduct>status,
+        <EstadoPedido>status,
         Number(limit),
         Number(skip)
       );
