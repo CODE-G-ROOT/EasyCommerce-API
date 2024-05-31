@@ -2,7 +2,6 @@ import { Response } from "express";
 
 export const duplicateKey = "E11000";
 
-// errores 200 (Producto creado)
 export const handle200Status = (res: Response, message?: string) => {
   res.status(200).json({
     status: 200,
@@ -10,7 +9,6 @@ export const handle200Status = (res: Response, message?: string) => {
   });
 };
 
-// errores 201 (Producto creado)
 export const handle201Status = (res: Response) => {
   res.status(201).json({
     status: 201,
@@ -18,7 +16,6 @@ export const handle201Status = (res: Response) => {
   });
 };
 
-// errores 404 (Recurso no encontrado)
 export const handle302Status = (res: Response, message?: string) => {
   res.status(302).json({
     status: 302,
@@ -33,7 +30,6 @@ export const handle304Status = (res: Response, message?: string) => {
   });
 };
 
-// errores 400 (Invalid parameter)
 export const handle400Status = (res: Response, message?: string | object) => {
   res.status(400).json({
     status: 400,
@@ -41,7 +37,6 @@ export const handle400Status = (res: Response, message?: string | object) => {
   });
 };
 
-// errores 404 (Recurso no encontrado)
 export const handle404Status = (res: Response, message?: string) => {
   res.status(404).json({
     status: 404,
@@ -49,7 +44,6 @@ export const handle404Status = (res: Response, message?: string) => {
   });
 };
 
-// errores 500 (Error interno del servidor)
 export const handle500Status = (error: any, res: Response) => {
   console.error(
     "Error interno del servidor:",

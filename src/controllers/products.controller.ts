@@ -69,9 +69,9 @@ export const findAll = async (req: Request, res: Response) => {
 
     results = await col.aggregate(query).toArray();
 
-    sendGetResponse(<any>results, res, "No documents to show"); // send response and error 404 handle
+    sendGetResponse(<any>results, res, "No documents to show"); 
   } catch (error: any) {
-    handle500Status(error, res); // handle error
+    handle500Status(error, res);
   }
 };
 

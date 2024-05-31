@@ -17,11 +17,11 @@ export const validateResult = (
 
 export const validateIfOneOrMoreFieldsExist = (value: object, allowedFields: string[]) => {
 
-  let countMatchingFields = 0; // Contador para campos coincidentes
+  let countMatchingFields = 0;
   
   for (const field in value) {
     if (allowedFields.includes(field)) {
-      countMatchingFields++; // Incrementar el contador si el campo es permitido
+      countMatchingFields++;
     } else {
       return false; 
     }
