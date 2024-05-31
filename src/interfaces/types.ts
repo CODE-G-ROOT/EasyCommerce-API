@@ -1,6 +1,6 @@
 import { Double, ObjectId } from "mongodb";
 
-export type EstadoPedido = "enviado" | "validando" | "incidencia";
+export type EstadoPedido = "enviado" | "no enviado";
 export type EstadoProduct = "activo" | "inactivo";
 export type PayMethod = "ContraEntega" | "Tarjeta Crédito/Débito";
 export type AggregationStage = {

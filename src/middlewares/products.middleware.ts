@@ -1,6 +1,5 @@
 import { body, check, query } from "express-validator";
 import { Double } from "mongodb";
-import { EstadoProduct } from "../interfaces/types";
 import { validateIfOneOrMoreFieldsExist, validateResult } from "../utils/validate.helper";
 import { NextFunction, Request, Response } from "express";
 
@@ -39,7 +38,7 @@ export const validationProduct = [
   check("status")
     .exists()
     .isString()
-    .custom((value) => <EstadoProduct>value)
+    .isIn(["activo", "inactivo"])
     .notEmpty(),
   check("description").exists().isString().notEmpty(),
   (req: Request, res: Response, next: NextFunction) => {

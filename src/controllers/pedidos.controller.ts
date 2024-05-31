@@ -1,17 +1,16 @@
 import { Request, Response } from "express";
 import MongodbConnection from "../services/mongo";
-import { collection, pedidoFields } from "../config/collections";
-import { executeQuery, findById, setPedido } from "../config/db.utils";
+import { collection } from "../config/collections";
+import PedidoService from "../services/pedidos.services";
 import { handle500Status } from "../utils/Erros";
-import { agregatePedidoModel, postPedidoModel } from "../models/models";
-import { EstadoPedido } from "../interfaces/types";
-import { DB, CON_STRING } from "../utils/utils";
 import {
-  sendUpdateResponse,
   sendGetResponse,
-  sendErrorPost,
+  sendUpdateResponse,
   sendErrorDeleted,
+  sendErrorPost,
 } from "../utils/send";
+import { DB, CON_STRING } from "../utils/utils";
+import { EstadoPedido } from "../interfaces/types";
 
 MongodbConnection.getIntance().connect(CON_STRING as string);
 const db = MongodbConnection.getIntance().getConnection(DB!);
@@ -20,36 +19,24 @@ const validateConnection = () => {
   MongodbConnection.getIntance().ensureConnection(DB!);
 };
 
+const pedidoService = new PedidoService(db.collection(collection.pedidos));
+
 // GET
 export const findAll = async (req: Request, res: Response) => {
   try {
     const { limit, skip, status, id } = req.query;
-
-    let results = null;
-
     validateConnection();
-    const col = await db.collection(collection.pedidos);
 
-    if (id) {
-      const match = [findById(<string>id), agregatePedidoModel];
-      results = await col.aggregate(match).toArray();
-      return sendGetResponse(results, res, "Document not found");
-    } else {
-      const query = executeQuery(
-        [pedidoFields.status_col_3],
-        [pedidoFields.last_update],
-        agregatePedidoModel,
-        <EstadoPedido>status,
-        Number(limit),
-        Number(skip)
-      );
+    const results = await pedidoService.findAll(
+      Number(limit),
+      Number(skip),
+      status as EstadoPedido,
+      id as string
+    );
 
-      results = await col.aggregate(query).toArray();
-    }
-
-    sendGetResponse(<any>results, res, "No documents to show"); // send response and error 404 handle
+    sendGetResponse(results, res, "Documents not found");
   } catch (error: any) {
-    handle500Status(error, res); // handle error
+    handle500Status(error, res);
   }
 };
 
@@ -58,58 +45,45 @@ export const createPedido = async (req: Request, res: Response) => {
   try {
     validateConnection();
 
-    const col = await db.collection(collection.pedidos);
-
-    const query = postPedidoModel(req.body);
-
-    const result = await col.insertOne(query);
-
+    const results = await pedidoService.createPedido(req.body);
     sendErrorPost(
-      result,
+      results,
       res,
       "The pedido has been created",
-      "Error to create the pedido"
+      "Error to create pedido"
     );
   } catch (error: any) {
     handle500Status(error, res);
   }
 };
 
-// PUT
+// UPDATE
 export const updateStatus = async (req: Request, res: Response) => {
   try {
     const id = req.query.id as string;
 
-    const [filter, update] = setPedido(id);
-
     validateConnection();
 
-    const col = await db.collection(collection.pedidos);
+    const result = await pedidoService.updateStatus(id);
 
-    const result = await col.updateOne(filter, update);
-
-    sendUpdateResponse(result, res, "Document updated", "Document don't found");
+    sendUpdateResponse(result, res, "Document Updated", "Document don't found");
   } catch (error: any) {
     handle500Status(error, res);
   }
 };
 
+// DELETE
 export const deletePedido = async (req: Request, res: Response) => {
   try {
     const id = req.query.id as string;
-
     validateConnection();
 
-    const col = await db.collection(collection.pedidos);
-    const result = await col.deleteOne(id);
-
+    const result = await pedidoService.deletePedido(id);
     sendErrorDeleted(
       res,
       result,
-      "The document has been deleted",
-      "Has been a error to delete the document"
+      "Document has been deleted",
+      "Has been a error to Delete the document"
     );
-  } catch (error: any) {
-    handle500Status(error, res);
-  }
+  } catch (error: any) {}
 };

@@ -137,7 +137,8 @@ export const deleteProduct = async (req: Request, res: Response) => {
     };
 
     validateConnection();
-    const col = await db.collection(collection.pedidos);
+    const col = await db.collection(collection.products);
+    
     const result = await col.deleteOne(objectId);
 
     sendErrorDeleted(

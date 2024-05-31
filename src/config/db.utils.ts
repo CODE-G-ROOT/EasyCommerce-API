@@ -8,7 +8,7 @@ const createMatchStage = (field: string, value: any) => {
   return {};
 };
 
-const createStatusMatchStage = (statusField: string, status?: EstadoProduct): AggregationStage[] => {
+const createStatusMatchStage = (statusField: string, status?: EstadoPedido | EstadoProduct): AggregationStage[] => {
   if(status) return [{ $match: { [statusField] : status }}];
   return []
 };
@@ -41,13 +41,13 @@ export const executeQuery = (
   statusfield: any,
   lastUpdatefield: any,
   project: any,
-  status?: EstadoProduct,
+  status?: EstadoPedido | EstadoProduct,
   limit?: number,
   skip?: number
 ): AggregationStage[] => [
   ...createStatusMatchStage(statusfield, status),
-  createLimitStage(limit? limit : 20),
   createSkipStage(skip? skip : 0),
+  createLimitStage(limit? limit : 20),
   createSortStage(statusfield, lastUpdatefield),
   project
 ];
