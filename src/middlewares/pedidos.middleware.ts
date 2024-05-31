@@ -4,23 +4,6 @@ import { check, query } from "express-validator";
 import { Double } from "mongodb";
 import { EstadoPedido, PayMethod } from "../interfaces/types";
 
-// const allowedFields = [
-//   "set_pedido_id",
-//   "price",
-//   "client_name",
-//   "client_lastname",
-//   "email",
-//   "phone",
-//   "country",
-//   "departament_or_state",
-//   "city",
-//   "postal_code",
-//   "meth_pay",
-//   "status",
-//   "val_to_pay",
-//   "dirrection"
-// ];
-
 export const validationBody = [
   check("set_pedido_id")
     .exists()
