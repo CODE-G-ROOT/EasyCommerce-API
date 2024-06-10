@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import MongodbConnection from "../services/mongo";
+import MongodbConnection from "../services/mongo.services";
 import { collection } from "../config/collections";
 import PedidoService from "../services/pedidos.services";
 import { handle500Status } from "../utils/Erros";

@@ -1,4 +1,4 @@
-import MongodbConnection from "./mongo";
+import MongodbConnection from "./mongo.services";
 import { DB, CON_STRING } from "../utils/utils";
 
 class DBConnection {

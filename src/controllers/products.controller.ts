@@ -1,130 +1,83 @@
-import dotenv from "dotenv";
-import MongodbConnection from "../services/mongo";
-import { Response, Request } from "express";
-import { collection, productFields } from "../config/collections";
+import { collection } from "../config/collections";
+import { Request, Response } from "express";
 import {
   sendErrorDeleted,
   sendErrorPost,
   sendGetResponse,
   sendUpdateResponse,
 } from "../utils/send";
-import { duplicateKey, handle302Status, handle500Status } from "../utils/Erros";
-import {
-  executeQuery,
-  findById,
-  findByName,
-  setProduct,
-} from "../config/db.utils";
-import { agregateProductModel, postProductModel } from "../models/models";
 import { EstadoProduct } from "../interfaces/types";
-import { ObjectId } from "mongodb";
-import { DB } from "../utils/utils";
-import { handleFileUpload } from "../config/cloudinary";
+import { duplicateKey, handle302Status, handle500Status } from "../utils/Erros";
+import MongodbConnection from "../services/mongo.services";
+import { CON_STRING, DB } from "../utils/utils";
+import ProductService from "../services/products.servces";
 
-dotenv.config();
-
-const CON_STRING = process.env.CON_STRING!;
-MongodbConnection.getIntance().connect(CON_STRING);
-
+MongodbConnection.getIntance().connect(CON_STRING as string);
 const db = MongodbConnection.getIntance().getConnection(DB!);
 
 const validateConnection = () => {
   MongodbConnection.getIntance().ensureConnection(DB!);
 };
 
+const productService = new ProductService(db.collection(collection.products));
+
 export const findAll = async (req: Request, res: Response) => {
   try {
     validateConnection();
-
     const { limit, skip, status, id, name } = req.query;
-    
-    let results = null;
 
-    const col = await db.collection(collection.products);
-
-    if (id) {
-      const match = [findById(<string>id), agregateProductModel];
-      results = await col.aggregate(match).toArray();
-
-      return sendGetResponse(results, res, "Document not found");
-    }
-
-    if (name) {
-      const Name = <string>name;
-      const Field = <any>[productFields.pack_name];
-      const match = [findByName(Name, Field), agregateProductModel];
-
-      results = await col.aggregate(match).toArray();
-      return sendGetResponse(results, res, "Document not found");
-    }
-
-    const query = executeQuery(
-      [productFields.status],
-      [productFields.lastUpdate],
-      agregateProductModel,
-      <EstadoProduct>status,
+    const results = await productService.findAll(
       Number(limit),
-      Number(skip)
+      Number(skip),
+      name as string,
+      status as EstadoProduct,
+      id as string
     );
 
-    results = await col.aggregate(query).toArray();
-
-    sendGetResponse(<any>results, res, "No documents to show"); 
+    sendGetResponse(results, res, "Documents not found");
   } catch (error: any) {
     handle500Status(error, res);
   }
 };
 
-// POST
 export const createProduct = async (req: Request, res: Response) => {
   try {
     validateConnection();
-    const col = await db.collection(collection.products);
 
-    const productname = req.body.product_name.toLowerCase();
+    const product_name = req.body.product_name.toLowerCase();
 
-    const existProduct = await col.findOne({
-      [productFields.pack_name]: productname,
-    });
+    const results = await productService.createProduct(product_name, req);
 
-    if (existProduct !== null) {
-      return handle302Status(
-        res,
-        `${req.body.product_name} product already exist.`
-      );
-    }
+    if (results === null) return handle302Status(
+      res,
+      `${req.body.product_name} product already exist.`
+    );
 
-    const files = await handleFileUpload(req);
-    const query = postProductModel(req.body, files);
-
-    const result = await col.insertOne(query);
-    sendErrorPost(result, res);
+    sendErrorPost(results, res);
   } catch (error: any) {
     const message = error.message.split(" ");
     if (message[0] === duplicateKey) handle302Status(res);
     else handle500Status(error, res);
+    /* PROBAR EN CASO DE ERROR */
     // console.dirxml(error.errInfo.details.schemaRulesNotSatisfied[0]);
   }
 };
 
-// PUT
 export const updateProduct = async (req: Request, res: Response) => {
   try {
     const id = req.query.id as string;
     const body: any = req.body;
 
     // ! NO ACTUALIZAR IMAGENES ---> AÚN NO SE HA AGREGADO ESA FEATURE
-
-    const [filter, update] = setProduct(id, body);
-
-    validateConnection();
-    const col = await db.collection(collection.products);
-
-    const result = await col.updateOne(filter, update);
-
+    const result = await productService.updateProduct(id, body);
     sendUpdateResponse(result, res, "Document updated", "Document don't found");
   } catch (error: any) {
     handle500Status(error, res);
+    // ↓ USAR EN CASO DE ERROR  
+    // console.dirxml(
+    //   error.errInfo.details.schemaRulesNotSatisfied[0].propertiesNotSatisfied[0]
+    //     .details
+    // );
   }
 };
 
@@ -132,14 +85,9 @@ export const deleteProduct = async (req: Request, res: Response) => {
   try {
     const id = req.query.id as string;
 
-    const objectId = {
-      _id: new ObjectId(id),
-    };
-
     validateConnection();
-    const col = await db.collection(collection.products);
-    
-    const result = await col.deleteOne(objectId);
+
+    const result = await productService.deleteProduct(id);
 
     sendErrorDeleted(
       res,
@@ -148,6 +96,11 @@ export const deleteProduct = async (req: Request, res: Response) => {
       "Has been a error to delete the document"
     );
   } catch (error: any) {
-    handle500Status(error, res);
+    const message = error.message.split(" ");
+    if (message[0] === duplicateKey) handle302Status(res);
+    else handle500Status(error, res);
+    // console.dirxml(error.errInfo.details.schemaRulesNotSatisfied[0]);
   }
 };
+
+

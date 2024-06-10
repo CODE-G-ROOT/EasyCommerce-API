@@ -57,11 +57,18 @@ export const validationPUTProduct = [
   check("priceByUnit")
     .optional()
     .isNumeric()
+    .custom((value) => {
+      const number = parseFloat(value);
+      if (isNaN(number)) {
+        throw new Error('Price must be a valid number');
+      }
+      return true;
+    })
+    .toFloat() 
     .isDecimal({
       decimal_digits: "2",
       force_decimal: true,
     })
-    .custom((value) => <Double>value)
     .notEmpty(),
   check("offerPrice")
     .optional()
