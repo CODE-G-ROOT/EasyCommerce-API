@@ -72,7 +72,49 @@ export const agregateProductModel = {
     status: `$${[data_col_1.status]}`,
     img: `$${[data_col_1.img]}`,
     description: `$${[data_col_1.description]}`,
-    creationDate: `$${[data_col_1.creationDate]}`,
-    lastUpdate: `$${[data_col_1.lastUpdate]}`,
+    creationDate: {
+      year: {
+        "$year" : `$${[data_col_1.creationDate]}`
+      },
+      month: {
+        "$month" : `$${[data_col_1.creationDate]}`
+      },
+      day: {
+        "$dayOfMonth" : `$${[data_col_1.creationDate]}`
+      },
+      time: {
+        hour: {
+          "$hour" : `$${[data_col_1.creationDate]}`
+        },
+        minute: {
+          "$minute" : `$${[data_col_1.creationDate]}`
+        },
+        second: {
+          "$second" : `$${[data_col_1.creationDate]}`
+        },
+      }
+    },
+    lastUpdate: {
+      year: {
+        "$year" : `$${[data_col_1.lastUpdate]}`
+      },
+      month: {
+        "$month" : `$${[data_col_1.lastUpdate]}`
+      },
+      day: {
+        "$dayOfMonth" : `$${[data_col_1.lastUpdate]}`
+      },
+      time: {
+        hour: {
+          "$hour" : `$${[data_col_1.lastUpdate]}`
+        },
+        minute: {
+          "$minute" : `$${[data_col_1.lastUpdate]}`
+        },
+        second: {
+          "$second" : `$${[data_col_1.lastUpdate]}`
+        },
+      }
+    },
   }
 };
