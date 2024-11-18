@@ -1,8 +1,8 @@
 import { pedidos_collection } from "../utils/utils";
 
 const {
-  PRODUCTS_COLLECTION,
-  PEDIDOS_COLLECTION,
+  COLLECTION1,
+  COLLECTION3,
   CMP_PR_PACK_NAME,
   CMP_PR_PRICE,
   CMP_PR_OFFER,
@@ -30,8 +30,8 @@ const {
 } = pedidos_collection;
 
 export const collection = {
-  products: PRODUCTS_COLLECTION,
-  pedidos: PEDIDOS_COLLECTION,
+  products: COLLECTION1,
+  pedidos: COLLECTION3,
 };
 
 export const productFields = {
