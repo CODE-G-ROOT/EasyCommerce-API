@@ -95,7 +95,7 @@ export const agregateProductModel = {
       }
     },
     lastUpdate: {
-      year: {
+      year: { 
         "$year" : `$${[data_col_1.lastUpdate]}`
       },
       month: {
